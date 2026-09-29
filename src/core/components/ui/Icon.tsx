@@ -10,7 +10,7 @@ export type IconName =
   | 'arrow-up' | 'arrow-down' | 'arrow-right' | 'out' | 'in'
   | 'shield' | 'card' | 'moon' | 'sun' | 'eye' | 'eye-off' | 'logout' | 'user'
   | 'x' | 'search' | 'trash' | 'pencil' | 'filter' | 'calendar' | 'archive'
-  | 'chevron-left' | 'chevron-right' | 'chevron-down' | 'scale' | 'inbox' | 'piggy';
+  | 'chevron-left' | 'chevron-right' | 'chevron-down' | 'scale' | 'inbox' | 'piggy' | 'menu';
 
 const PATHS: Record<IconName, string> = {
   home: 'M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5',
@@ -25,6 +25,7 @@ const PATHS: Record<IconName, string> = {
   gift: 'M4 11h16v10H4zM3 7h18v4H3zM12 7v14M12 7S10 3 8 3a2 2 0 0 0 0 4M12 7s2-4 4-4a2 2 0 0 1 0 4',
   landmark: 'M3 21h18M4 10h16M5 10v11M19 10v11M9 10v11M15 10v11M12 3 3 8h18z',
   ellipsis: 'M6 12h.01M12 12h.01M18 12h.01',
+  menu: 'M4 6h16M4 12h16M4 18h16',
   banknote: 'M2 7h20v10H2zM12 12h.01M6 12h.01M18 12h.01',
   wallet: 'M3 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2M3 8v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4M3 8h15a3 3 0 0 1 3 3v2h-4a2.5 2.5 0 0 1 0-5h4M17.5 13h.01',
   list: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',

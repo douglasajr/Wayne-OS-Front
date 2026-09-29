@@ -8,10 +8,17 @@
  * El boton de registro rapido esta en el centro de la barra inferior porque es
  * la accion que mas se repite: anotar un gasto debe costar un pulgar, no un
  * viaje por un menu.
+ *
+ * La barra inferior solo tiene cuatro huecos, asi que en movil el RESTO de la
+ * navegacion (Ajustes, Reportes, Tarjetas...) vive en un menu del encabezado.
+ * Antes no habia ninguno: en el telefono esas pantallas solo se alcanzaban
+ * tecleando la URL. El menu se arma con el mismo catalogo que la barra
+ * lateral, asi que un dominio nuevo aparece en los dos sin tocar este archivo.
  */
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Icon } from '@/core/components/ui/Icon';
+import { Sheet } from '@/core/components/ui/Sheet';
 import { BatEmblem } from '@/core/components/BatEmblem';
 import { useTheme } from '@/core/hooks/useTheme';
 import { useAuth } from '@/platform/auth/hooks/useAuth';
@@ -49,6 +56,10 @@ export function AppShell({
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const title = titleFor(pathname);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Elegir un destino cierra el menu: la navegacion ya ocurrio.
+  useEffect(() => setMenuOpen(false), [pathname]);
 
   return (
     <div className="min-h-dvh lg:flex" style={{ background: 'var(--page)' }}>
@@ -171,8 +182,54 @@ export function AppShell({
             >
               <Icon name="logout" size={16} />
             </button>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              className="grid h-9 w-9 place-items-center border"
+              style={{ borderColor: 'var(--line)', color: 'var(--ink-2)', borderRadius: 'var(--radius-sm)' }}
+              aria-label="Abrir menú"
+              aria-expanded={menuOpen}
+            >
+              <Icon name="menu" size={16} />
+            </button>
           </div>
         </header>
+
+        {/* --- Menu movil: todo lo que no cabe en la barra inferior --- */}
+        <Sheet open={menuOpen} onClose={() => setMenuOpen(false)} title="Menú" subtitle={user?.name}>
+          <nav className="flex flex-col gap-0.5 pb-[env(safe-area-inset-bottom)]">
+            <SidebarLink item={HOME} />
+
+            {DOMAINS.map((domain) => (
+              <div key={domain.id} className="mt-3">
+                <span
+                  className="label-deco block px-3 pb-1.5 text-[8px]"
+                  style={{ color: 'var(--ink-muted)' }}
+                >
+                  {domain.label}
+                </span>
+                {domain.items.map((item) => (
+                  <SidebarLink key={item.to} item={item} />
+                ))}
+              </div>
+            ))}
+
+            <div className="mt-3 border-t pt-3" style={{ borderColor: 'var(--line)' }}>
+              {PLATFORM_NAV.map((item) => (
+                <SidebarLink key={item.to} item={item} />
+              ))}
+              <button
+                type="button"
+                onClick={() => void logout()}
+                className="flex w-full items-center gap-2.5 border-l-2 border-transparent px-3 py-2.5 text-sm font-medium"
+                style={{ color: 'var(--ink-2)' }}
+              >
+                <Icon name="logout" size={18} strokeWidth={1.8} />
+                Cerrar sesión
+              </button>
+            </div>
+          </nav>
+        </Sheet>
 
         <main
           className="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 sm:px-5 lg:px-8 lg:pt-8"
