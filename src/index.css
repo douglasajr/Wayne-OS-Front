@@ -1,0 +1,459 @@
+@import 'tailwindcss';
+
+/* ===========================================================================
+   Tema — art déco nocturno
+   ---------------------------------------------------------------------------
+   Referencia visual: sala de juntas de rascacielos a medianoche. Negro carbón,
+   latón bruñido, geometría recta y tipografía grabada.
+
+   Regla que gobierna el tema: el CROMO lleva el estilo (superficies, bordes,
+   tipografía, acento), los DATOS conservan su paleta validada. Los ocho slots
+   categóricos pasan todos los checks de daltonismo y contraste contra estas
+   superficies; se probó una variante más apagada, más acorde al ambiente, y
+   falló (ΔE 7.5 en deuteranopía). El estilo no se paga con legibilidad.
+   =========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* --- Superficies: negro con temperatura fría, nunca gris plano --- */
+  --page: #08090c;
+  --surface: #101319;
+  --surface-2: #181c24;
+  --surface-raised: #141821;
+
+  --ink: #f0f1f3;
+  --ink-2: #a8adb8;
+  --ink-muted: #6e7480;
+
+  /* Los bordes llevan un tinte de latón: a este nivel no se lee como color,
+     pero separa el metal del plástico. */
+  --line: rgba(227, 179, 65, 0.12);
+  --line-strong: rgba(227, 179, 65, 0.26);
+
+  /* --- Latón: el acento --- */
+  --accent: #e3b341;
+  --accent-soft: #f0c65a;
+  --accent-deep: #9a7716;
+  --accent-ink: #0a0b0e;
+  --accent-glow: rgba(227, 179, 65, 0.18);
+
+  /* Estado: el semáforo del producto. Fijo, nunca tematizado — un color de
+     estado jamás debe confundirse con el acento de marca. */
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+
+  /* Datos: ocho slots validados para la superficie oscura. */
+  --cat-1: #3987e5;
+  --cat-2: #d95926;
+  --cat-3: #199e70;
+  --cat-4: #c98500;
+  --cat-5: #d55181;
+  --cat-6: #008300;
+  --cat-7: #9085e9;
+  --cat-8: #e66767;
+  --cat-neutral: #898781;
+  --cat-income: #0ca30c;
+
+  /* Déco: ángulos rectos con el canto apenas roto, no cápsulas. */
+  --radius: 4px;
+  --radius-sm: 3px;
+  --radius-pill: 2px;
+
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 10px 30px rgba(0, 0, 0, 0.55);
+
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-figure: 'Oswald', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* Modo claro: mármol y bronce. El latón brillante no contrasta sobre blanco,
+   así que el acento baja a bronce oscuro para seguir siendo legible. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+
+    --page: #efece4;
+    --surface: #fbfaf7;
+    --surface-2: #efece4;
+    --surface-raised: #ffffff;
+
+    --ink: #14161a;
+    --ink-2: #4a4e57;
+    --ink-muted: #7c8089;
+
+    --line: rgba(20, 22, 26, 0.12);
+    --line-strong: rgba(122, 94, 18, 0.4);
+
+    --accent: #7a5e12;
+    --accent-soft: #9a7716;
+    --accent-deep: #5c4608;
+    --accent-ink: #fbfaf7;
+    --accent-glow: rgba(122, 94, 18, 0.12);
+
+    --cat-1: #2a78d6;
+    --cat-2: #eb6834;
+    --cat-3: #1baf7a;
+    --cat-4: #eda100;
+    --cat-5: #e87ba4;
+    --cat-6: #008300;
+    --cat-7: #4a3aa7;
+    --cat-8: #e34948;
+    --cat-neutral: #898781;
+    --cat-income: #006300;
+
+    --shadow: 0 1px 2px rgba(20, 22, 26, 0.05), 0 8px 24px rgba(20, 22, 26, 0.07);
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --page: #efece4;
+  --surface: #fbfaf7;
+  --surface-2: #efece4;
+  --surface-raised: #ffffff;
+  --ink: #14161a;
+  --ink-2: #4a4e57;
+  --ink-muted: #7c8089;
+  --line: rgba(20, 22, 26, 0.12);
+  --line-strong: rgba(122, 94, 18, 0.4);
+  --accent: #7a5e12;
+  --accent-soft: #9a7716;
+  --accent-deep: #5c4608;
+  --accent-ink: #fbfaf7;
+  --accent-glow: rgba(122, 94, 18, 0.12);
+  --cat-1: #2a78d6;
+  --cat-2: #eb6834;
+  --cat-3: #1baf7a;
+  --cat-4: #eda100;
+  --cat-5: #e87ba4;
+  --cat-6: #008300;
+  --cat-7: #4a3aa7;
+  --cat-8: #e34948;
+  --cat-neutral: #898781;
+  --cat-income: #006300;
+  --shadow: 0 1px 2px rgba(20, 22, 26, 0.05), 0 8px 24px rgba(20, 22, 26, 0.07);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Cifras en columna deben alinearse; un número suelto se lee mejor con
+   figuras proporcionales. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Wordmark grabado en piedra. */
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Cifras y etiquetas: condensada, como en una placa de latón. */
+.figure {
+  font-family: var(--font-figure);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.label-deco {
+  font-family: var(--font-figure);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Filo de latón en el borde superior de una tarjeta: el detalle que convierte
+   un rectángulo en un panel. */
+.edge-top {
+  position: relative;
+}
+.edge-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--accent) 55%, transparent) 20%,
+    color-mix(in oklab, var(--accent) 55%, transparent) 80%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Textura de tramado fino, apenas perceptible: evita el negro plano. */
+.hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--accent) 5%, transparent) 0 1px,
+    transparent 1px 7px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  animation: shimmer 1.8s infinite;
+}
+
+/* Campos de formulario, con el foco marcado en latón. */
+.field {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-size: 16px; /* 16px evita que iOS haga zoom al enfocar el campo */
+  padding: 13px 14px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field::placeholder {
+  color: var(--ink-muted);
+}
+.field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ===========================================================================
+   Secuencia de bienvenida
+   ---------------------------------------------------------------------------
+   El emblema entra desde lejos, la regla déco se abre desde el centro y el
+   nombre sube después. Todo respeta `prefers-reduced-motion`: con esa
+   preferencia activa la intro ni siquiera se monta.
+
+   Tiempos (medidos, no estimados): el nombre alcanza opacidad plena a 1.8s y
+   la escena se sostiene hasta 4.6s, dejando ~2.8s de lectura cómoda. En la
+   primera versión entraba a 2.0s y salía a 2.9s: menos de un segundo, y el
+   saludo no daba tiempo a leerse.
+   =========================================================================== */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.intro-out {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+.intro-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(52% 44% at 50% 44%, var(--accent-glow), transparent 68%);
+  animation: intro-vignette 2.2s ease-out both;
+}
+
+@keyframes intro-vignette {
+  0% { opacity: 0; }
+  40% { opacity: 1; }
+  100% { opacity: 0.55; }
+}
+
+.intro-emblem {
+  animation: intro-emblem 1.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Llega volando: lejos y borroso, hasta plantarse. */
+@keyframes intro-emblem {
+  0% { opacity: 0; transform: scale(0.35) translateY(26px); filter: blur(9px); }
+  55% { opacity: 1; filter: blur(0); }
+  70% { transform: scale(1.07) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+
+.intro-rule-line {
+  display: block;
+  height: 1px;
+  width: 0;
+  background: var(--accent);
+  animation: intro-rule 0.7s 0.62s ease-out both;
+}
+.intro-rule > .intro-rule-line:first-child {
+  background: linear-gradient(90deg, transparent, var(--accent));
+}
+.intro-rule > .intro-rule-line:last-child {
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+@keyframes intro-rule {
+  from { width: 0; opacity: 0; }
+  to { width: 58px; opacity: 1; }
+}
+
+.intro-rule-gem {
+  display: block;
+  height: 7px;
+  width: 7px;
+  rotate: 45deg;
+  background: var(--accent);
+  animation: intro-gem 0.45s 0.56s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes intro-gem {
+  from { opacity: 0; scale: 0; }
+  to { opacity: 1; scale: 1; }
+}
+
+.intro-hello {
+  animation: intro-rise 0.6s 0.86s ease-out both;
+}
+.intro-name {
+  animation: intro-name 0.85s 1.0s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.intro-skip {
+  animation: intro-fade-in 0.7s 2.4s ease-out both;
+}
+
+/* El nombre entra con un punto de escala: es la palabra que se debe leer. */
+@keyframes intro-name {
+  0% { opacity: 0; transform: translateY(16px) scale(0.94); letter-spacing: 0.34em; }
+  100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 0.18em; }
+}
+
+@keyframes intro-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes intro-fade-in {
+  from { opacity: 0; }
+  to { opacity: 0.65; }
+}
+
+/* ===========================================================================
+   Panel modal (Sheet)
+   ---------------------------------------------------------------------------
+   En movil entra desde abajo, en escritorio aparece en el centro. El fondo se
+   oscurece y se desenfoca apenas: separa el panel de la pagina sin apagarla.
+
+   Con `prefers-reduced-motion` la regla global de arriba reduce la duracion a
+   0.01ms, asi que el panel aparece sin deslizarse. Es deliberado: el
+   movimiento vertical grande es justo lo que molesta a quien pide menos
+   animacion.
+   =========================================================================== */
+
+.sheet-backdrop {
+  background: color-mix(in oklab, #04050a 72%, transparent);
+  backdrop-filter: blur(2px);
+  animation: sheet-fade 0.2s ease-out both;
+}
+
+.sheet-panel {
+  border-radius: var(--radius) var(--radius) 0 0;
+  animation: sheet-rise 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (min-width: 640px) {
+  .sheet-panel {
+    border-radius: var(--radius);
+    animation: sheet-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes sheet-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheet-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sheet-pop {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Ficha seleccionable (categoria, cuenta, tipo de movimiento). El estado
+   activo NO se comunica solo con color: cambia tambien el borde y el peso del
+   texto, que se distinguen sin percibir el tono. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.chip[aria-pressed='true'],
+.chip[data-selected='true'] {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Fila de fichas que se desplaza en horizontal sin barra visible. */
+.chip-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.chip-row::-webkit-scrollbar {
+  display: none;
+}
