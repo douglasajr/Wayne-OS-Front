@@ -252,6 +252,19 @@ export function useUnarchiveAccount() {
   });
 }
 
+/**
+ * Ajuste de saldo: se manda el saldo REAL (firmado: deuda en negativo) y el
+ * backend registra la diferencia como un movimiento que no es gasto.
+ */
+export function useAdjustBalance() {
+  const invalidate = useInvalidateMoney();
+  return useMutation({
+    mutationFn: ({ id, ...payload }: { id: string; balance: string; date: string }) =>
+      api.post<Transaction>(`/finance/accounts/${id}/adjust`, payload),
+    onSuccess: invalidate,
+  });
+}
+
 export interface ReconcileResult {
   results: {
     accountId: string;

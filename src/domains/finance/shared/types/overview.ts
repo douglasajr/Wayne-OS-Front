@@ -2,7 +2,7 @@
 import type { PendingItem } from './recurring';
 
 export type BudgetStatus = 'HEALTHY' | 'WARNING' | 'CRITICAL' | 'EXCEEDED';
-export type TransactionType = 'EXPENSE' | 'INCOME' | 'TRANSFER';
+export type TransactionType = 'EXPENSE' | 'INCOME' | 'TRANSFER' | 'ADJUSTMENT';
 
 /** Los montos viajan como string: un number en JSON perderia precision. */
 export type Money = string;
@@ -124,6 +124,8 @@ export interface DashboardSummary {
     amount: Money;
     date: string;
     type: TransactionType;
+    /** Entra dinero a la cuenta: un ingreso o un ajuste al alza. */
+    isInflow: boolean;
     isMicroExpense: boolean;
     categoryName: string | null;
     categoryColor: string | null;

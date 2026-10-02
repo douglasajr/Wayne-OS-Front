@@ -2,7 +2,8 @@
 export type Money = string;
 
 export type AccountType = 'CHECKING' | 'SAVINGS' | 'CASH' | 'CREDIT_CARD' | 'INVESTMENT' | 'LOAN';
-export type TransactionType = 'EXPENSE' | 'INCOME' | 'TRANSFER';
+/** ADJUSTMENT lo crea "Ajustar saldo", no el formulario de movimientos. */
+export type TransactionType = 'EXPENSE' | 'INCOME' | 'TRANSFER' | 'ADJUSTMENT';
 export type PaymentMethod = 'CASH' | 'DEBIT_CARD' | 'CREDIT_CARD' | 'BANK_TRANSFER' | 'CHECK' | 'OTHER';
 
 export interface Account {

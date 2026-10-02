@@ -179,7 +179,7 @@ function AccountForm({ editing, onDone }: { editing: Account | null; onDone: () 
             hint={
               isDebt
                 ? 'Escríbelo en positivo: se guarda como deuda.'
-                : 'Con lo que la cuenta entra al sistema. No se puede cambiar después.'
+                : 'Con lo que la cuenta entra al sistema. Si luego no cuadra con el banco, usa «Ajustar saldo».'
             }
             onChange={(e) => setBalance(e.target.value.replace(/[^\d.]/g, ''))}
           />

@@ -50,24 +50,28 @@ export function RecentTransactions({ items }: { items: DashboardSummary['recentT
           {items.map((t) => {
             const isTransfer = t.type === 'TRANSFER';
             const isIncome = t.type === 'INCOME';
-            const sign = isTransfer ? '' : isIncome ? '+' : '−';
-            const tone = isTransfer ? 'var(--ink-2)' : isIncome ? 'var(--good)' : 'var(--ink)';
+            // Un ajuste no es gasto ni ingreso: tono neutro como el traslado, pero con
+            // signo, porque si cambia cuanto tienes.
+            const isAdjustment = t.type === 'ADJUSTMENT';
+            const neutral = isTransfer || isAdjustment;
+            const sign = isTransfer ? '' : isAdjustment ? (t.isInflow ? '+' : '−') : isIncome ? '+' : '−';
+            const tone = neutral ? 'var(--ink-2)' : isIncome ? 'var(--good)' : 'var(--ink)';
 
             return (
               <li key={t.id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0" style={{ borderColor: 'var(--line)' }}>
                 <span
                   className="grid h-9 w-9 shrink-0 place-items-center "
                   style={{
-                    background: isTransfer
+                    background: neutral
                       ? 'var(--surface-2)'
                       : `color-mix(in oklab, ${categoryColor(t.categoryColor)} 15%, transparent)`,
-                    color: isTransfer ? 'var(--ink-muted)' : categoryColor(t.categoryColor),
+                    color: neutral ? 'var(--ink-muted)' : categoryColor(t.categoryColor),
                   }}
                 >
                   {/* El icono de la categoria dice mas que una flecha: de un
                       vistazo se ve que fue comida, gasolina o salud. */}
                   <Icon
-                    name={isTransfer ? 'repeat' : isIncome ? 'in' : (t.categoryIcon ?? 'out')}
+                    name={isTransfer ? 'repeat' : isAdjustment ? 'scale' : isIncome ? 'in' : (t.categoryIcon ?? 'out')}
                     size={16}
                     strokeWidth={2}
                   />
@@ -85,7 +89,7 @@ export function RecentTransactions({ items }: { items: DashboardSummary['recentT
                     )}
                   </div>
                   <div className="truncate text-[11px]" style={{ color: 'var(--ink-muted)' }}>
-                    {isTransfer ? 'Transferencia · no es gasto' : (t.categoryName ?? 'Sin categoría')}
+                    {isTransfer ? 'Transferencia · no es gasto' : isAdjustment ? 'Ajuste · no es gasto' : (t.categoryName ?? 'Sin categoría')}
                     {t.accountName ? ` · ${t.accountName.replace(' [demo]', '')}` : ''}
                   </div>
                 </div>

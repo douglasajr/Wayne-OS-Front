@@ -27,7 +27,7 @@ interface Props {
   onEdit: (tx: Transaction) => void;
 }
 
-const TYPE_LABEL = { EXPENSE: 'Gasto', INCOME: 'Ingreso', TRANSFER: 'Traslado' } as const;
+const TYPE_LABEL = { EXPENSE: 'Gasto', INCOME: 'Ingreso', TRANSFER: 'Traslado', ADJUSTMENT: 'Ajuste de saldo' } as const;
 
 export function TransactionDetailSheet({ transaction, onClose, onEdit }: Props) {
   return (
@@ -49,7 +49,10 @@ function Detail({ tx, onClose, onEdit }: { tx: Transaction; onClose: () => void;
 
   const isTransfer = tx.type === 'TRANSFER';
   const isIncome = tx.type === 'INCOME';
-  const tone = isTransfer ? 'var(--ink-2)' : isIncome ? 'var(--good)' : 'var(--ink)';
+  const isAdjustment = tx.type === 'ADJUSTMENT';
+  // Ni traslado ni ajuste cambian el gasto: los dos van en tono neutro.
+  const tone = isTransfer || isAdjustment ? 'var(--ink-2)' : isIncome ? 'var(--good)' : 'var(--ink)';
+  const sign = isTransfer ? '' : isAdjustment ? (tx.toAccount ? '+' : '−') : isIncome ? '+' : '−';
 
   // Solo una compra con tarjeta de credito se difiere: en debito el dinero ya
   // salio y repartir su cobro no significa nada.
@@ -59,7 +62,7 @@ function Detail({ tx, onClose, onEdit }: { tx: Transaction; onClose: () => void;
     <div className="space-y-4">
       <div className="text-center">
         <div className="figure tabular text-[38px] leading-none" style={{ color: tone }}>
-          {isTransfer ? '' : isIncome ? '+' : '−'}
+          {sign}
           {money(tx.amount)}
         </div>
         {tx.description && <p className="mt-1.5 text-sm font-semibold">{tx.description}</p>}
@@ -74,8 +77,18 @@ function Detail({ tx, onClose, onEdit }: { tx: Transaction; onClose: () => void;
         </p>
       )}
 
+      {isAdjustment && (
+        <p
+          className="px-3 py-2.5 text-center text-[12px]"
+          style={{ background: 'var(--surface-2)', color: 'var(--ink-2)', borderRadius: 'var(--radius-sm)' }}
+        >
+          Corrige el saldo de la cuenta a lo que dice el banco. <strong>No cuenta como gasto ni como
+          ingreso.</strong>
+        </p>
+      )}
+
       <dl className="divide-y text-sm" style={{ borderColor: 'var(--line)' }}>
-        {!isTransfer && (
+        {!isTransfer && !isAdjustment && (
           <Row label="Categoría">
             <span className="inline-flex items-center gap-2">
               <span style={{ color: categoryColor(tx.category?.color) }}>
@@ -85,8 +98,14 @@ function Detail({ tx, onClose, onEdit }: { tx: Transaction; onClose: () => void;
             </span>
           </Row>
         )}
-        {tx.fromAccount && <Row label={isTransfer ? 'Sale de' : 'Pagado con'}>{tx.fromAccount.name}</Row>}
-        {tx.toAccount && <Row label="Entra a">{tx.toAccount.name}</Row>}
+        {isAdjustment ? (
+          <Row label="Cuenta">{(tx.fromAccount ?? tx.toAccount)?.name}</Row>
+        ) : (
+          <>
+            {tx.fromAccount && <Row label={isTransfer ? 'Sale de' : 'Pagado con'}>{tx.fromAccount.name}</Row>}
+            {tx.toAccount && <Row label="Entra a">{tx.toAccount.name}</Row>}
+          </>
+        )}
         {tx.toAmount && <Row label="Monto recibido">{money(tx.toAmount)}</Row>}
         <Row label="Fecha">{longDate(tx.date)}</Row>
         {tx.paymentMethod && <Row label="Método">{PAYMENT_METHOD[tx.paymentMethod]}</Row>}
@@ -148,8 +167,8 @@ function Detail({ tx, onClose, onEdit }: { tx: Transaction; onClose: () => void;
           }}
         >
           <p className="text-[13px]" style={{ color: 'var(--ink-2)' }}>
-            Se borrará el movimiento y el saldo de la cuenta volverá atrás {money(tx.amount)}. El total del
-            mes cambiará.
+            Se borrará el movimiento y el saldo de la cuenta volverá atrás {money(tx.amount)}.
+            {isAdjustment ? ' El gasto del mes no cambia.' : ' El total del mes cambiará.'}
           </p>
           <div className="flex gap-2">
             <Button variant="ghost" full onClick={() => setConfirming(false)}>
@@ -171,9 +190,13 @@ function Detail({ tx, onClose, onEdit }: { tx: Transaction; onClose: () => void;
         </div>
       ) : (
         <div className="flex gap-2">
-          <Button variant="ghost" full icon="pencil" onClick={() => onEdit(tx)}>
-            Corregir
-          </Button>
+          {/* Un ajuste salio del saldo de ese momento: no se corrige, se borra
+              y se vuelve a ajustar desde la cuenta. */}
+          {!isAdjustment && (
+            <Button variant="ghost" full icon="pencil" onClick={() => onEdit(tx)}>
+              Corregir
+            </Button>
+          )}
           <Button variant="danger" full icon="trash" onClick={() => setConfirming(true)}>
             Borrar
           </Button>

@@ -13,7 +13,7 @@ import type { Account } from '@/domains/finance/shared/types/domain';
 
 export interface FiltersState {
   search: string;
-  type: '' | 'EXPENSE' | 'INCOME' | 'TRANSFER';
+  type: '' | 'EXPENSE' | 'INCOME' | 'TRANSFER' | 'ADJUSTMENT';
   accountId: string;
   from: string;
   to: string;
@@ -39,6 +39,7 @@ const TYPES: { value: FiltersState['type']; label: string }[] = [
   { value: 'EXPENSE', label: 'Gastos' },
   { value: 'INCOME', label: 'Ingresos' },
   { value: 'TRANSFER', label: 'Traslados' },
+  { value: 'ADJUSTMENT', label: 'Ajustes' },
 ];
 
 interface Props {

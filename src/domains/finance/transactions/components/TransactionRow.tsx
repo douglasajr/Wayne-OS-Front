@@ -15,8 +15,12 @@ import type { Transaction } from '@/domains/finance/shared/types/domain';
 export function TransactionRow({ tx, onSelect }: { tx: Transaction; onSelect: (tx: Transaction) => void }) {
   const isTransfer = tx.type === 'TRANSFER';
   const isIncome = tx.type === 'INCOME';
-  const sign = isTransfer ? '' : isIncome ? '+' : '−';
-  const tone = isTransfer ? 'var(--ink-2)' : isIncome ? 'var(--good)' : 'var(--ink)';
+  // Un ajuste no es gasto ni ingreso: tono neutro como el traslado, pero con
+  // signo, porque si cambia cuanto tienes.
+  const isAdjustment = tx.type === 'ADJUSTMENT';
+  const neutral = isTransfer || isAdjustment;
+  const sign = isTransfer ? '' : isAdjustment ? (tx.toAccount !== null ? '+' : '−') : isIncome ? '+' : '−';
+  const tone = neutral ? 'var(--ink-2)' : isIncome ? 'var(--good)' : 'var(--ink)';
   const color = categoryColor(tx.category?.color);
 
   const account = isTransfer
@@ -35,15 +39,15 @@ export function TransactionRow({ tx, onSelect }: { tx: Transaction; onSelect: (t
         <span
           className="grid h-9 w-9 shrink-0 place-items-center"
           style={{
-            background: isTransfer
+            background: neutral
               ? 'var(--surface-2)'
               : `color-mix(in oklab, ${color} 15%, transparent)`,
-            color: isTransfer ? 'var(--ink-muted)' : color,
+            color: neutral ? 'var(--ink-muted)' : color,
             borderRadius: 'var(--radius-sm)',
           }}
         >
           <Icon
-            name={isTransfer ? 'repeat' : isIncome ? 'in' : (tx.categoryIcon ?? 'out')}
+            name={isTransfer ? 'repeat' : isAdjustment ? 'scale' : isIncome ? 'in' : (tx.categoryIcon ?? 'out')}
             size={16}
             strokeWidth={2}
           />
@@ -61,7 +65,7 @@ export function TransactionRow({ tx, onSelect }: { tx: Transaction; onSelect: (t
             )}
           </div>
           <div className="truncate text-[11px]" style={{ color: 'var(--ink-muted)' }}>
-            {isTransfer ? 'Traslado · no es gasto' : (tx.category?.name ?? 'Sin categoría')}
+            {isTransfer ? 'Traslado · no es gasto' : isAdjustment ? 'Ajuste · no es gasto' : (tx.category?.name ?? 'Sin categoría')}
             {account ? ` · ${account}` : ''}
           </div>
         </div>
